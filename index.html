@@ -445,6 +445,38 @@ document.getElementById("navigateBtn").onclick = () => {
     window.open(url, "_blank");
 };
 </script>
+	<script>
+  function checkLicense() {
+    const key = localStorage.getItem("infopartner_license");
+    if (key && key.length > 5) {
+      return true;
+    }
+    return false;
+  }
+
+  if (!checkLicense()) {
+    document.body.innerHTML = `
+      <div style="padding:20px;text-align:center;">
+        <h2>Licencia nie je aktivovaná</h2>
+        <p>Zadajte licenčný kľúč pre pokračovanie.</p>
+        <input id="licenseKey" placeholder="Zadajte licenčný kľúč" style="padding:10px;width:80%;max-width:300px;">
+        <br><br>
+        <button onclick="activateLicense()" style="padding:10px 20px;">Aktivovať</button>
+      </div>
+    `;
+  }
+
+  function activateLicense() {
+    const key = document.getElementById("licenseKey").value;
+    if (key.length > 5) {
+      localStorage.setItem("infopartner_license", key);
+      location.reload();
+    } else {
+      alert("Neplatný licenčný kľúč");
+    }
+  }
+</script>
+
 </body>
 </html>
 	
