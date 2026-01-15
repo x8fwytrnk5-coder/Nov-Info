@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InfoKľúč taxikára</title>
 
+	<link rel="manifest" href="manifest.json">
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <style>
@@ -474,6 +476,11 @@ document.getElementById("navigateBtn").onclick = () => {
     } else {
       alert("Neplatný licenčný kľúč");
     }
+  }
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
   }
 </script>
 
