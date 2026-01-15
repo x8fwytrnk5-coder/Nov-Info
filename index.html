@@ -491,16 +491,7 @@ if (daysUsed < TRIAL_DAYS) {
       </div>
     `;
 }
-</script>
 
-	<script>
-  function checkLicense() {
-    const key = localStorage.getItem("infopartner_license");
-    if (key && key.length > 5) {
-      return true;
-    }
-    return false;
-  }
 
   if (daysUsed >= TRIAL_DAYS && !checkLicense()) {
     document.body.innerHTML = `
