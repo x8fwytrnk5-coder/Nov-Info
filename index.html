@@ -471,7 +471,7 @@ if (daysUsed < TRIAL_DAYS) {
     banner.style.top = "0";
     banner.style.left = "0";
     banner.style.width = "100%";
-    banner.style.padding = "10px";
+    banner.style.padding = "5px";
     banner.style.background = "#ffcc00";
     banner.style.color = "#000";
     banner.style.textAlign = "center";
@@ -479,6 +479,7 @@ if (daysUsed < TRIAL_DAYS) {
     banner.style.zIndex = "9999";
     banner.innerText = `Používate skúšobnú verziu. Zostáva ${daysLeft} dní.`;
     document.body.appendChild(banner);
+
 } else {
     // trial skončil → zobrazíme licenčnú výzvu
     document.body.innerHTML = `
