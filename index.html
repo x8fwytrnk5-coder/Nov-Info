@@ -74,46 +74,8 @@ body {
     position: relative;
 }
 </style>
-</head>
-
-<body>
-
-<div id="container">
-    <div id="leftPanel">
-        <div id="closePanel">×</div>
-        <div id="results"></div>
-    </div>
-    <div id="map"></div>
-</div>
-
-<button id="navigateBtn" style="
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 15px 25px;
-    background: #999;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-size: 18px;
-    opacity: 0.5;
-    pointer-events: none;
-    z-index: 9999;
-">Navigovať</button>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-// --------------------------------------
-// MAPA + FUNKCIE
-// --------------------------------------
-let map = L.map('map').setView([48.45, 19.13], 13);
-let selectedPlace = null;
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-}).addTo(map);
-
 document.getElementById("closePanel").onclick = () => {
     document.getElementById("leftPanel").classList.remove("open");
 };
@@ -137,10 +99,8 @@ document.getElementById("navigateBtn").onclick = () => {
 };
 </script>
 
-<!-- -------------------------------------- -->
-<!-- 3-DŇOVÝ TRIAL -->
-<!-- -------------------------------------- -->
 <script>
+// --- 3-dňový trial systém ---
 const TRIAL_DAYS = 3;
 let trialStart = localStorage.getItem("trialStart");
 
@@ -167,6 +127,7 @@ if (daysUsed < TRIAL_DAYS) {
     banner.innerText = `Používate skúšobnú verziu. Zostáva ${daysLeft} dní.`;
     document.body.appendChild(banner);
 } else {
+    // 🔥 OPRAVA: žiadne document.body.innerHTML
     const licenseBox = document.createElement("div");
     licenseBox.style.position = "fixed";
     licenseBox.style.top = "10px";
@@ -178,24 +139,16 @@ if (daysUsed < TRIAL_DAYS) {
     licenseBox.style.borderRadius = "10px";
     licenseBox.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
     licenseBox.style.zIndex = "99999";
-    licenseBox.style.fontFamily = "Arial";
     licenseBox.innerHTML = `
-        <h3 style="margin:0 0 10px 0;font-size:18px;">Skúšobná verzia skončila</h3>
-        <p style="margin:0 0 10px 0;font-size:14px;">Zadajte licenčný kľúč:</p>
-        <input id="licenseKey" placeholder="Licenčný kľúč" 
-               style="padding:8px;width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #aaa;">
-        <button onclick="activateLicense()" 
-                style="margin-top:10px;width:100%;padding:8px;border:none;border-radius:6px;background:#1976d2;color:#fff;font-size:14px;cursor:pointer;">
-            Aktivovať
-        </button>
+        <h2>Skúšobná verzia skončila</h2>
+        <p>Aktivujte licenciu pre pokračovanie.</p>
+        <input id="licenseKey" placeholder="Zadajte licenčný kľúč" style="padding:10px;width:100%;">
+        <button onclick="activateLicense()" style="margin-top:10px;width:100%;padding:10px;">Aktivovať</button>
     `;
     document.body.appendChild(licenseBox);
 }
 </script>
 
-<!-- -------------------------------------- -->
-<!-- LICENCIA -->
-<!-- -------------------------------------- -->
 <script>
 function checkLicense() {
     const key = localStorage.getItem("infopartner_license");
@@ -203,6 +156,7 @@ function checkLicense() {
 }
 
 if (daysUsed >= TRIAL_DAYS && !checkLicense()) {
+    // 🔥 OPRAVA: žiadne document.body.innerHTML
     const licenseBox = document.createElement("div");
     licenseBox.style.position = "fixed";
     licenseBox.style.top = "10px";
@@ -214,16 +168,11 @@ if (daysUsed >= TRIAL_DAYS && !checkLicense()) {
     licenseBox.style.borderRadius = "10px";
     licenseBox.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
     licenseBox.style.zIndex = "99999";
-    licenseBox.style.fontFamily = "Arial";
     licenseBox.innerHTML = `
-        <h3 style="margin:0 0 10px 0;font-size:18px;">Licencia nie je aktivovaná</h3>
-        <p style="margin:0 0 10px 0;font-size:14px;">Zadajte licenčný kľúč:</p>
-        <input id="licenseKey" placeholder="Licenčný kľúč" 
-               style="padding:8px;width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #aaa;">
-        <button onclick="activateLicense()" 
-                style="margin-top:10px;width:100%;padding:8px;border:none;border-radius:6px;background:#1976d2;color:#fff;font-size:14px;cursor:pointer;">
-            Aktivovať
-        </button>
+        <h2>Licencia nie je aktivovaná</h2>
+        <p>Zadajte licenčný kľúč pre pokračovanie.</p>
+        <input id="licenseKey" placeholder="Zadajte licenčný kľúč" style="padding:10px;width:100%;">
+        <button onclick="activateLicense()" style="margin-top:10px;width:100%;padding:10px;">Aktivovať</button>
     `;
     document.body.appendChild(licenseBox);
 }
