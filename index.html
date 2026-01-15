@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InfoKľúč taxikára</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial;
+    background: #fff;
+    color: #000;
+    overflow: hidden;
+}
+
+#container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* PANEL */
+#leftPanel {
+    width: 0px;
+    max-width: 400px;
+    background: #f4f4f4;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+    transition: width 0.3s ease;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#leftPanel.open {
+    width: 35%;
+}
+
+#closePanel {
+    display: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+#leftPanel.open #closePanel {
+    display: block;
+}
+
+.result {
+    background: #fff;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.result:hover {
+    background: #e9f1ff;
+}
+
+/* MAPA */
+#map {
+    flex-grow: 1;
+    height: 100%;
+    width: 100%;
+    display: block;
+    position: relative;
+}
+</style>
+</head>
+
+<body>
+
+<div id="container">
+    <div id="leftPanel">
+        <div id="closePanel">×</div>
+        <div id="results"></div>
+    </div>
+    <div id="map"></div>
+</div>
+
+<button id="navigateBtn" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background: #999;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 9999;
+">Navigovať</button>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+// --------------------------------------
+// MAPA + FUNKCIE
+// --------------------------------------
+let map = L.map('map').setView([48.45, 19.13], 13);
+let selectedPlace = null;
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
+
+document.getElementById("closePanel").onclick = () => {
+    document.getElementById("leftPanel").classList.remove("open");
+};
+
+function selectPlace(place) {
+    selectedPlace = place;
+    map.setView([place.lat, place.lon], 17);
+
+    const btn = document.getElementById("navigateBtn");
+    btn.style.background = "#1976d2";
+    btn.style.opacity = "1";
+    btn.style.pointerEvents = "auto";
+
+    document.getElementById("leftPanel").classList.remove("open");
+}
+
+document.getElementById("navigateBtn").onclick = () => {
+    if (!selectedPlace) return;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedPlace.lat},${selectedPlace.lon}`;
+    window.open(url, "_blank");
+};
+</script>
+
+<!-- -------------------------------------- -->
+<!-- 3-DŇOVÝ TRIAL -->
+<!-- -------------------------------------- -->
+<script>
+const TRIAL_DAYS = 3;
+let trialStart = localStorage.getItem("trialStart");
+
+if (!trialStart) {
+    trialStart = Date.now();
+    localStorage.setItem("trialStart", trialStart);
+}
+
+const daysUsed = Math.floor((Date.now() - trialStart) / (1000 * 60 * 60 * 24));
+
+if (daysUsed < TRIAL_DAYS) {
+    const daysLeft = TRIAL_DAYS - daysUsed;
+    const banner = document.createElement("div");
+    banner.style.position = "fixed";
+    banner.style.top = "0";
+    banner.style.left = "0";
+    banner.style.width = "100%";
+    banner.style.padding = "10px";
+    banner.style.background = "#ffcc00";
+    banner.style.color = "#000";
+    banner.style.textAlign = "center";
+    banner.style.fontSize = "16px";
+    banner.style.zIndex = "9999";
+    banner.innerText = `Používate skúšobnú verziu. Zostáva ${daysLeft} dní.`;
+    document.body.appendChild(banner);
+} else {
+    const licenseBox = document.createElement("div");
+    licenseBox.style.position = "fixed";
+    licenseBox.style.top = "10px";
+    licenseBox.style.right = "10px";
+    licenseBox.style.width = "260px";
+    licenseBox.style.padding = "15px";
+    licenseBox.style.background = "#ffffff";
+    licenseBox.style.border = "1px solid #ccc";
+    licenseBox.style.borderRadius = "10px";
+    licenseBox.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    licenseBox.style.zIndex = "99999";
+    licenseBox.style.fontFamily = "Arial";
+    licenseBox.innerHTML = `
+        <h3 style="margin:0 0 10px 0;font-size:18px;">Skúšobná verzia skončila</h3>
+        <p style="margin:0 0 10px 0;font-size:14px;">Zadajte licenčný kľúč:</p>
+        <input id="licenseKey" placeholder="Licenčný kľúč" 
+               style="padding:8px;width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #aaa;">
+        <button onclick="activateLicense()" 
+                style="margin-top:10px;width:100%;padding:8px;border:none;border-radius:6px;background:#1976d2;color:#fff;font-size:14px;cursor:pointer;">
+            Aktivovať
+        </button>
+    `;
+    document.body.appendChild(licenseBox);
+}
+</script>
+
+<!-- -------------------------------------- -->
+<!-- LICENCIA -->
+<!-- -------------------------------------- -->
+<script>
+function checkLicense() {
+    const key = localStorage.getItem("infopartner_license");
+    return (key && key.length > 5);
+}
+
+if (daysUsed >= TRIAL_DAYS && !checkLicense()) {
+    const licenseBox = document.createElement("div");
+    licenseBox.style.position = "fixed";
+    licenseBox.style.top = "10px";
+    licenseBox.style.right = "10px";
+    licenseBox.style.width = "260px";
+    licenseBox.style.padding = "15px";
+    licenseBox.style.background = "#ffffff";
+    licenseBox.style.border = "1px solid #ccc";
+    licenseBox.style.borderRadius = "10px";
+    licenseBox.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    licenseBox.style.zIndex = "99999";
+    licenseBox.style.fontFamily = "Arial";
+    licenseBox.innerHTML = `
+        <h3 style="margin:0 0 10px 0;font-size:18px;">Licencia nie je aktivovaná</h3>
+        <p style="margin:0 0 10px 0;font-size:14px;">Zadajte licenčný kľúč:</p>
+        <input id="licenseKey" placeholder="Licenčný kľúč" 
+               style="padding:8px;width:100%;box-sizing:border-box;border-radius:6px;border:1px solid #aaa;">
+        <button onclick="activateLicense()" 
+                style="margin-top:10px;width:100%;padding:8px;border:none;border-radius:6px;background:#1976d2;color:#fff;font-size:14px;cursor:pointer;">
+            Aktivovať
+        </button>
+    `;
+    document.body.appendChild(licenseBox);
+}
+
+function activateLicense() {
+    const key = document.getElementById("licenseKey").value;
+    if (key.length > 5) {
+        localStorage.setItem("infopartner_license", key);
+        location.reload();
+    } else {
+        alert("Neplatný licenčný kľúč");
+    }
+}
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>
