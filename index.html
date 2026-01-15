@@ -502,7 +502,7 @@ if (daysUsed < TRIAL_DAYS) {
     return false;
   }
 
-  if (!checkLicense()) {
+  if (daysUsed >= TRIAL_DAYS && !checkLicense()) {
     document.body.innerHTML = `
       <div style="padding:20px;text-align:center;">
         <h2>Licencia nie je aktivovaná</h2>
