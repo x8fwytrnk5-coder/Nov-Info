@@ -448,6 +448,52 @@ document.getElementById("navigateBtn").onclick = () => {
 };
 </script>
 	<script>
+// --- 3-dňový trial systém ---
+const TRIAL_DAYS = 3;
+
+// načítame uložený dátum trialu
+let trialStart = localStorage.getItem("trialStart");
+
+// ak trial ešte nezačal → nastavíme dnešný dátum
+if (!trialStart) {
+    trialStart = Date.now();
+    localStorage.setItem("trialStart", trialStart);
+}
+
+// vypočítame rozdiel dní
+const daysUsed = Math.floor((Date.now() - trialStart) / (1000 * 60 * 60 * 24));
+
+// ak trial ešte beží → zobrazíme banner
+if (daysUsed < TRIAL_DAYS) {
+    const daysLeft = TRIAL_DAYS - daysUsed;
+    const banner = document.createElement("div");
+    banner.style.position = "fixed";
+    banner.style.top = "0";
+    banner.style.left = "0";
+    banner.style.width = "100%";
+    banner.style.padding = "10px";
+    banner.style.background = "#ffcc00";
+    banner.style.color = "#000";
+    banner.style.textAlign = "center";
+    banner.style.fontSize = "16px";
+    banner.style.zIndex = "9999";
+    banner.innerText = `Používate skúšobnú verziu. Zostáva ${daysLeft} dní.`;
+    document.body.appendChild(banner);
+} else {
+    // trial skončil → zobrazíme licenčnú výzvu
+    document.body.innerHTML = `
+      <div style="padding:20px;text-align:center;">
+        <h2>Skúšobná verzia skončila</h2>
+        <p>Aktivujte licenciu pre pokračovanie.</p>
+        <input id="licenseKey" placeholder="Zadajte licenčný kľúč" style="padding:10px;width:80%;max-width:300px;">
+        <br><br>
+        <button onclick="activateLicense()" style="padding:10px 20px;">Aktivovať</button>
+      </div>
+    `;
+}
+</script>
+
+	<script>
   function checkLicense() {
     const key = localStorage.getItem("infopartner_license");
     if (key && key.length > 5) {
